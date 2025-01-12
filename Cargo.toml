@@ -1,0 +1,13 @@
+[package]
+name = "photo-sorter"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "3.0", features = ["derive"] }
+chrono = "0.4"
+rexif = "0.7.5"
+log = "0.4.17"
+env_logger = "0.10.0"
+rayon = "1.7"
+indicatif = "0.17"

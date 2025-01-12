@@ -1,0 +1,1 @@
+/Users/duanluyao/Documents/image/rust-image-manage/photo-sorter/target/debug/libphoto_sorter.rlib: /Users/duanluyao/Documents/image/rust-image-manage/photo-sorter/src/error.rs /Users/duanluyao/Documents/image/rust-image-manage/photo-sorter/src/lib.rs /Users/duanluyao/Documents/image/rust-image-manage/photo-sorter/src/photo.rs
