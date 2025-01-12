@@ -55,21 +55,10 @@ pub fn sort_photos_by_install_date(photo_dir: &str, output_dir: &str) -> Result<
             
             // 从源路径中提取年份和日期目录结构
             let path = Path::new(&photo.path);
-            let src_path = Path::new(photo_dir);
-            
-            // 获取相对路径，确保正确处理路径分隔符
-            let rel_path = path.strip_prefix(src_path)
-                .map_err(|e| PhotoSortError::ProcessError(e.to_string()))?
-                .parent()
-                .and_then(|p| p.to_str())
-                .unwrap_or("");
-            
+
             // 构建目标目录路径
-            let target_dir = if rel_path.is_empty() {
-                output_dir.to_string()
-            } else {
-                format!("{}/{}", *output_dir, rel_path)
-            };
+            info!("输出目录：{}", photo.date);
+            let target_dir = format!("{}/{}", *output_dir, photo.date);
 
             // 确保目标目录存在
             fs::create_dir_all(&target_dir)?;
