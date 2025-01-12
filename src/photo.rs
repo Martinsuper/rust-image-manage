@@ -15,11 +15,12 @@ impl Photo {
     pub fn new(path: &str) -> Result<Self, PhotoSortError> {
         // 检查文件是否为支持的图片格式
         if (!Self::is_supported_image(path)) {
+            warn!("跳过不支持的文件: {}", path);
             return Err(PhotoSortError::UnsupportedFormat(format!("不支持的文件格式: {}", path)));
         }
 
         let date = Self::extract_date(path)?;
-        info!("成功解析照片: {}", path);
+        info!("✓ 成功解析照片 [{}]", path);
         Ok(Photo {
             path: path.to_string(),
             date,
@@ -27,7 +28,20 @@ impl Photo {
     }
 
     fn is_supported_image(path: &str) -> bool {
-        let extensions = ["jpg", "jpeg", "png", "gif", "tiff"];
+        let extensions = [
+            // 常规图片格式
+            "jpg", "jpeg", "png", "gif", "tiff",
+            // RAW格式
+            "arw",  // Sony
+            "cr2", "cr3",  // Canon
+            "nef",  // Nikon
+            "orf",  // Olympus
+            "rw2",  // Panasonic
+            "pef",  // Pentax
+            "raf",  // Fujifilm
+            "raw", "dng"  // 通用RAW格式
+        ];
+        
         Path::new(path)
             .extension()
             .and_then(|ext| ext.to_str())
@@ -47,7 +61,7 @@ impl Photo {
 
     fn get_exif_date(path: &str) -> Result<String, PhotoSortError> {
         let exif = parse_file(path).map_err(|e| {
-            error!("解析EXIF失败 {}: {}", path, e);
+            error!("❌ 解析EXIF失败 {}: {}", path, e);
             PhotoSortError::ExifError(e)
         })?;
 
@@ -55,7 +69,7 @@ impl Photo {
             if entry.tag == ExifTag::DateTimeOriginal {
                 if let TagValue::Ascii(values) = entry.value {
                     let date_str = values;
-                        info!("从EXIF提取到日期: {}", date_str);
+                        info!("📅 从EXIF提取到日期: {}", date_str);
                         return Ok(date_str.replace(':', "-").replace(' ', "_"));
                     }
                 }
@@ -70,7 +84,7 @@ impl Photo {
             .into();
             
         let date_str = created.format("%Y-%m-%d_%H-%M-%S").to_string();
-        info!("使用文件创建时间: {} -> {}", path, date_str);
+        info!("📅 使用文件创建时间: {} -> {}", path, date_str);
         Ok(date_str)
     }
 }

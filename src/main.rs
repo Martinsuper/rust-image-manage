@@ -1,4 +1,6 @@
 use clap::Parser;
+use env_logger::Env;
+use log::{error, info};
 
 #[derive(Parser)]
 #[clap(author, version, about)]
@@ -10,11 +12,18 @@ struct Args {
 }
 
 fn main() {
-    let args = Args::parse();
+    // 初始化日志
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
+    
+    let args: Args = Args::parse();
+    info!("开始处理照片");
+    info!("源目录: {}", args.photo_dir);
+    info!("目标目录: {}", args.output_dir);
 
-    // 调用分类功能
-    match photo_sorter::sort_photos_by_install_date(&args.photo_dir, &args.output_dir) {
-        Ok(_) => println!("照片分类成功。"),
-        Err(e) => eprintln!("分类过程中发生错误: {}", e),
+    if let Err(e) = photo_sorter::sort_photos_by_install_date(&args.photo_dir, &args.output_dir) {
+        error!("处理照片失败: {}", e);
+        std::process::exit(1);
     }
+    
+    info!("照片处理完成");
 }
