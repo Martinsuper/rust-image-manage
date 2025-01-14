@@ -95,13 +95,3 @@ fn visit_dirs(dir: &Path, entries: &mut Vec<fs::DirEntry>) -> Result<(), PhotoSo
     }
     Ok(())
 }
-
-// 新增获取相对路径函数
-fn get_relative_path(full_path: &Path, base_path: &Path) -> Option<String> {
-    full_path
-        .strip_prefix(base_path)
-        .ok()
-        .and_then(|p| p.parent())
-        .and_then(|p| p.to_str())
-        .map(|s| s.to_string())
-}
